@@ -20,6 +20,13 @@ def newTransaction(event, context):
 
     amount = float(transaction['amount']) / 100
 
+    ## Transform foreign currencies
+    local_amount = ''
+    if transaction['local_currency'] != 'GBP':
+        local_amount = "%.2f %s" % (
+                float(transaction['local_amount'])/100, transaction['local_currency']
+            )
+
     item = transaction['category']
 
     output = {

@@ -3,13 +3,16 @@
     "data": {
         "account_id": "acc_00008gju41AHyfLUzBUk8A",
         "amount": -350,
-        "created": "2015-09-04T14:28:40Z",
+        "created": "2015-09-04T14:28:40.706Z",
         "currency": "GBP",
         "description": "Ozone Coffee Roasters",
         "id": "tx_00008zjky19HyFLAzlUk7t",
         "category": "eating_out",
         "is_load": false,
         "settled": true,
+        "fees": {},
+        "local_amount": -406,
+        "local_currency": "EUR",
         "merchant": {
             "address": {
                 "address": "98 Southgate Road",
@@ -20,6 +23,8 @@
                 "postcode": "N1 3JD",
                 "region": "Greater London"
             },
+            "online": false,
+            "atm": false,
             "created": "2015-08-22T12:20:18Z",
             "group_id": "grp_00008zIcpbBOaAr7TTP3sv",
             "id": "merch_00008zIcpbAKe8shBxXUtl",
