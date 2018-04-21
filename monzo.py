@@ -7,6 +7,8 @@ from dateutil.parser import parse
 
 ## ----- Global vars -----
 dateOutFmt = "%d/%m/%Y %H:%M:%S"
+lunch_start = '1100'
+lunch_end   = '1430'
 
 ## ----- Setup logging -----
 log = logging.getLogger()
@@ -30,6 +32,12 @@ def newTransaction(event, context):
             )
 
     item = transaction['category']
+    # Lunch hours and a weekday (5 = sat)
+    if lunch_start < txTime.strftime('%H%M') < lunch_end and txTime.weekday() < 5:
+        item = "Lunch"
+    else:
+        item = "Groceries"
+
 
     output = {
         'Timestamp': dt.strftime(txTime, dateOutFmt),
