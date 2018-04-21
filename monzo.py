@@ -2,6 +2,7 @@
 
 import logging
 from datetime import datetime as dt
+from dateutil import tz
 from dateutil.parser import parse
 
 ## ----- Global vars -----
@@ -16,7 +17,8 @@ def newTransaction(event, context):
     transaction = event['data']
     merchant = transaction['merchant']
 
-    txTime = parse(transaction['created'])
+    txUTC = parse(transaction['created'])
+    txTime = txUTC.astimezone(tz.gettz(merchant['address']['country']))
 
     amount = float(transaction['amount']) / 100
 
