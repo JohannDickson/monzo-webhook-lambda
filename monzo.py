@@ -2,8 +2,6 @@
 
 import os
 import sys
-sys.path.append('lib')
-
 import logging
 # Date operations
 from datetime import datetime as dt
@@ -21,9 +19,9 @@ lunch_end   = '1430'
 ## ----- Spreadsheet setup -----
 SCOPE = 'https://www.googleapis.com/auth/spreadsheets'
 VALUE_INPUT = 'USER_ENTERED'
-SERVICE_ACCOUNT_FILE = 'gsheets.json'
-SPREADSHEET_ID = "CHANGEME"
-WORKSHEET = "CHANGEME"
+SERVICE_ACCOUNT_FILE = os.environ['AUTHCREDS']
+SPREADSHEET_ID = os.environ['SPREADSHEET_ID']
+WORKSHEET = os.environ['WORKSHEET']
 
 ## ----- Setup logging -----
 log = logging.getLogger()
