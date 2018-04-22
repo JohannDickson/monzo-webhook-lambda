@@ -1,14 +1,29 @@
 #! /usr/bin/env python
 
+import os
+import sys
+sys.path.append('lib')
+
 import logging
+# Date operations
 from datetime import datetime as dt
 from dateutil import tz
 from dateutil.parser import parse
+# Spreadsheet integration
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
 ## ----- Global vars -----
 dateOutFmt = "%d/%m/%Y %H:%M:%S"
 lunch_start = '1100'
 lunch_end   = '1430'
+
+## ----- Spreadsheet setup -----
+SCOPE = 'https://www.googleapis.com/auth/spreadsheets'
+VALUE_INPUT = 'USER_ENTERED'
+SERVICE_ACCOUNT_FILE = 'gsheets.json'
+SPREADSHEET_ID = "CHANGEME"
+WORKSHEET = "CHANGEME"
 
 ## ----- Setup logging -----
 log = logging.getLogger()
@@ -55,5 +70,27 @@ def newTransaction(event, context):
         '__PowerAppsId__': context.aws_request_id,
     }
     log.info(output)
+
+    values = [
+        output['Timestamp'],
+        output['Item'],
+        output['Vendor'],
+        output['Amount'],
+        output['Local'],
+        output['__PowerAppsId__'],
+    ]
+
+    log.debug("Retrieving credentials")
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(SERVICE_ACCOUNT_FILE, SCOPE)
+    log.debug("Authorizing credentials")
+    gc = gspread.authorize(credentials)
+
+    log.debug("Accessing sheet")
+    sheet = gc.open_by_key(SPREADSHEET_ID)
+    ws = sheet.worksheet(WORKSHEET)
+
+    log.info("Inserting values: %s", values)
+    result = ws.append_row(values, VALUE_INPUT)
+    log.info("Values added at cells: %s", result['updates']['updatedRange'].split('!')[-1])
 
     return {'statusCode': 200}
