@@ -1,10 +1,10 @@
 LAMBDA_FUNCTION_NAME=monzo-webhook
 LAMBDA_HANDLER=newTransaction
-LAMBDA_FILE=monzo.py
-ZIP_FILE=monzo.zip
+LAMBDA_FILE=$(LAMBDA_FUNCTION_NAME).py
+ZIP_FILE=$(LAMBDA_FUNCTION_NAME).zip
 PACKAGE_ZIP=dist/$(ZIP_FILE)
 VIRT_ENV=env
-include lambda.env 	# provides AUTHCREDS
+LAMBDA_ENV=src/lambda.env
 
 install: venv
 build: mkdist clean_dist zip
@@ -17,7 +17,7 @@ venv:
 	fi
 	( \
 		. $(VIRT_ENV)/bin/activate; \
-		pip3 install -r requirements.txt; \
+		pip3 install -r config/requirements.txt; \
 	)
 
 clean_dist:
@@ -34,8 +34,7 @@ clean_dist:
 mkdist:
 	mkdir -p dist
 	cp -r $(VIRT_ENV)/lib/python3*/site-packages/* dist/
-	cp $(LAMBDA_FILE) dist/
-	cp $(AUTHCREDS) dist/
+	cp -r src/* dist/
 
 zip:
 	cd dist; \
@@ -51,4 +50,4 @@ upload:
 set_env:
 	aws lambda update-function-configuration \
 		--function-name $(LAMBDA_FUNCTION_NAME) \
-		--environment Variables="{"$(shell cat lambda.env | paste -sd',' -)"}"
+		--environment Variables="{"$(shell cat $(LAMBDA_ENV) | paste -sd',' -)"}"
