@@ -50,4 +50,5 @@ upload:
 set_env:
 	aws lambda update-function-configuration \
 		--function-name $(LAMBDA_FUNCTION_NAME) \
+        --handler $(LAMBDA_FUNCTION_NAME).${LAMBDA_HANDLER} \
 		--environment Variables="{"$(shell cat $(LAMBDA_ENV) | paste -sd',' -)"}"
