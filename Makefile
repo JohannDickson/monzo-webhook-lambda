@@ -4,7 +4,7 @@ LAMBDA_FILE=$(LAMBDA_FUNCTION_NAME).py
 ZIP_FILE=$(LAMBDA_FUNCTION_NAME).zip
 PACKAGE_ZIP=dist/$(ZIP_FILE)
 VIRT_ENV=env
-LAMBDA_ENV=src/lambda.env
+LAMBDA_ENV=config/lambda.env
 
 install: venv
 build: mkdist clean_dist zip
