@@ -5,10 +5,11 @@ ZIP_FILE=$(LAMBDA_FUNCTION_NAME).zip
 PACKAGE_ZIP=dist/$(ZIP_FILE)
 VIRT_ENV=env
 LAMBDA_ENV=config/lambda.env
+LAMBDA_ROLE=arn:aws:iam::CHANGEME:role/..
 
 install: venv
 build: mkdist clean_dist zip
-update: build upload set_env
+update: build lambda_upload lambda_setenv
 
 venv:
 	if test ! -d "$(VIRT_ENV)"; then \
@@ -42,13 +43,27 @@ zip:
 		zip -r $(ZIP_FILE) *; \
 		chmod 644 $(ZIP_FILE); \
 
-upload:
+lambda_upload:
 	aws lambda update-function-code \
 		--function-name $(LAMBDA_FUNCTION_NAME) \
 		--zip-file fileb://$(PACKAGE_ZIP)
 
-set_env:
+lambda_setenv:
 	aws lambda update-function-configuration \
 		--function-name $(LAMBDA_FUNCTION_NAME) \
-        --handler $(LAMBDA_FUNCTION_NAME).${LAMBDA_HANDLER} \
 		--environment Variables="{"$(shell cat $(LAMBDA_ENV) | paste -sd',' -)"}"
+
+lambda_create:
+	aws lambda create-function \
+		--function-name $(LAMBDA_FUNCTION_NAME) \
+		--runtime python3.6 \
+		--role $(LAMBDA_ROLE) \
+		--handler $(LAMBDA_FUNCTION_NAME).$(LAMBDA_HANDLER) \
+		--zip-file fileb://$(PACKAGE_ZIP) \
+		--environment Variables="{"$(shell cat $(LAMBDA_ENV) | paste -sd',' -)"}" \
+		--timeout 8 \
+		--memory-size 128 \
+
+lambda_delete:
+	aws lambda delete-function \
+		--function-name $(LAMBDA_FUNCTION_NAME)
