@@ -29,6 +29,11 @@ log.setLevel(logging.INFO)
 
 
 def newTransaction(transaction):
+
+    if transaction['settled']:
+        log.info("Transaction settled, exiting")
+        return
+
     merchant = transaction['merchant']
 
     txUTC = parse(transaction['created'])
