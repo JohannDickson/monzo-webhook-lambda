@@ -28,8 +28,7 @@ log = logging.getLogger()
 log.setLevel(logging.INFO)
 
 
-def newTransaction(event, context):
-    transaction = event['data']
+def newTransaction(transaction):
     merchant = transaction['merchant']
 
     txUTC = parse(transaction['created'])
@@ -90,5 +89,10 @@ def newTransaction(event, context):
     log.info("Inserting values: %s", values)
     result = ws.append_row(values, VALUE_INPUT)
     log.info("Values added at cells: %s", result['updates']['updatedRange'].split('!')[-1])
+
+
+def lambda_handler(event, context):
+    transaction = event['data']
+    newTransaction(transaction)
 
     return {'statusCode': 200}
