@@ -99,6 +99,12 @@ def newTransaction(transaction):
 
 def lambda_handler(event, context):
     transaction = event['data']
-    newTransaction(transaction)
+
+    if transaction['merchant']:
+        log.debug("Processing transaction")
+        log.info(transaction)
+        newTransaction(transaction)
+
+    log.debug("Processing complete")
 
     return {'statusCode': 200}
