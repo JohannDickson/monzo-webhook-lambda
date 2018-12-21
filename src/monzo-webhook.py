@@ -32,9 +32,10 @@ def newTransaction(transaction):
     merchant = transaction['merchant']
 
     txUTC = parse(transaction['created'])
-    txTime = txUTC.astimezone(tz.gettz(merchant['address']['country']))
+    txCountry = "GB"
+    txTime = txUTC.astimezone(tz.gettz(txCountry))
     log.debug("Transaction time:  %s (UTC)", dt.strftime(txUTC, dateOutFmt))
-    log.debug("Local transaction: %s (%s)", dt.strftime(txTime, dateOutFmt), merchant['address']['country'])
+    log.debug("Local transaction: %s (%s)", dt.strftime(txTime, dateOutFmt), txCountry)
 
     ## Transform cents into units
     amount = float(transaction['amount']) / 100
