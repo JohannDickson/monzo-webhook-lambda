@@ -47,11 +47,27 @@ def get_worksheet():
     return ws
 
 
+def update_amount(transactionId, amount):
+    ws = get_worksheet()
+    cell = ws.find(transactionId)
+
+    log.info("Found initial transaction at Row %s:Col %s", cell.row, cell.col)
+
+    log.debug("Updating amount to %s", amount)
+    result = ws.update_cell(cell.row, cell.col - 2, amount)
+    log.info(result)
+
+
 def newTransaction(transaction):
 
     if transaction['settled']:
-        log.info("Transaction settled, exiting")
-        return
+        if transaction['local_currency'] != 'GBP':
+            log.info("Updating settled foreign transaction %s", transaction['id'])
+            update_amount(transaction['id'], convert_amount(transaction['amount']))
+            return
+        else:
+            log.info("Local transaction settled, exiting")
+            return
 
     merchant = transaction['merchant']
 
