@@ -70,7 +70,7 @@ def newTransaction(transaction):
         'Vendor': merchant['name'],
         'Amount': "%.2f" % amount,
         'Local': local_amount,
-        '__PowerAppsId__': context.aws_request_id,
+        'ID': transaction['id'],
     }
     log.info(output)
 
