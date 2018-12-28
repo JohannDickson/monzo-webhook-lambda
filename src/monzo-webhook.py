@@ -28,6 +28,10 @@ log = logging.getLogger()
 log.setLevel(logging.INFO)
 
 
+def convert_amount(amount):
+    return float(amount) / 100
+
+
 def newTransaction(transaction):
 
     if transaction['settled']:
@@ -43,14 +47,14 @@ def newTransaction(transaction):
     log.debug("Local transaction: %s (%s)", dt.strftime(txTime, dateOutFmt), txCountry)
 
     ## Transform cents into units
-    amount = float(transaction['amount']) / 100
+    amount = convert_amount(transaction['amount'])
     log.debug("Amount: %s", amount)
 
     ## Transform foreign currencies
     local_amount = ''
     if transaction['local_currency'] != 'GBP':
         local_amount = "%.2f %s" % (
-                float(transaction['local_amount'])/100, transaction['local_currency']
+                convert_amount(transaction['local_amount']), transaction['local_currency']
             )
         log.debug("Local amount: ", local_amount)
 
