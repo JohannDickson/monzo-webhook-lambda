@@ -34,6 +34,19 @@ def convert_amount(amount):
     return float(amount) / 100
 
 
+def get_worksheet():
+    log.debug("Retrieving credentials")
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(SERVICE_ACCOUNT_FILE, SCOPE)
+    log.debug("Authorizing credentials")
+    gc = gspread.authorize(credentials)
+
+    log.debug("Accessing sheet %s in %s", WORKSHEET, SPREADSHEET_ID)
+    sheet = gc.open_by_key(SPREADSHEET_ID)
+    ws = sheet.worksheet(WORKSHEET)
+
+    return ws
+
+
 def newTransaction(transaction):
 
     if transaction['settled']:
@@ -93,14 +106,7 @@ def write_new_entry_to_spreadsheet(values):
         values['ID'],
     ]
 
-    log.debug("Retrieving credentials")
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(SERVICE_ACCOUNT_FILE, SCOPE)
-    log.debug("Authorizing credentials")
-    gc = gspread.authorize(credentials)
-
-    log.debug("Accessing sheet")
-    sheet = gc.open_by_key(SPREADSHEET_ID)
-    ws = sheet.worksheet(WORKSHEET)
+    ws = get_worksheet()
 
     log.info("Inserting values: %s", newEntry)
     result = ws.append_row(newEntry, VALUE_INPUT)
