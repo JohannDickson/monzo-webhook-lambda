@@ -27,6 +27,8 @@ WORKSHEET = os.environ['WORKSHEET']
 log = logging.getLogger()
 log.setLevel(logging.INFO)
 
+# Spreadsheet headers:
+# Timestamp | Item | Vendor | Amount | Local amount | ID
 
 def convert_amount(amount):
     return float(amount) / 100
@@ -68,7 +70,7 @@ def newTransaction(transaction):
 
 
     ## What we'll send to spreadsheet
-    output = {
+    values = {
         'Timestamp': dt.strftime(txTime, dateOutFmt),
         'Item': item,
         'Vendor': merchant['name'],
@@ -76,15 +78,19 @@ def newTransaction(transaction):
         'Local': local_amount,
         'ID': transaction['id'],
     }
-    log.info(output)
+    log.info(values)
 
-    values = [
-        output['Timestamp'],
-        output['Item'],
-        output['Vendor'],
-        output['Amount'],
-        output['Local'],
-        output['__PowerAppsId__'],
+    write_new_entry_to_spreadsheet(values)
+
+
+def write_new_entry_to_spreadsheet(values):
+    newEntry = [
+        values['Timestamp'],
+        values['Item'],
+        values['Vendor'],
+        values['Amount'],
+        values['Local'],
+        values['ID'],
     ]
 
     log.debug("Retrieving credentials")
@@ -96,8 +102,8 @@ def newTransaction(transaction):
     sheet = gc.open_by_key(SPREADSHEET_ID)
     ws = sheet.worksheet(WORKSHEET)
 
-    log.info("Inserting values: %s", values)
-    result = ws.append_row(values, VALUE_INPUT)
+    log.info("Inserting values: %s", newEntry)
+    result = ws.append_row(newEntry, VALUE_INPUT)
     log.info("Values added at cells: %s", result['updates']['updatedRange'].split('!')[-1])
 
 
