@@ -58,6 +58,30 @@ def update_amount(transactionId, amount):
     log.info(result)
 
 
+def newTransfer(transaction):
+    counterparty = transaction['counterparty']
+
+    txUTC = parse(transaction['created'])
+    txCountry = "GB"
+    txTime = txUTC.astimezone(tz.gettz(txCountry))
+    log.debug("Transfer time:  %s (UTC)", dt.strftime(txUTC, dateOutFmt))
+
+    amount = convert_amount(transaction['amount'])
+    log.debug("Amount: %s", amount)
+
+    values = {
+        'Timestamp': dt.strftime(txTime, dateOutFmt),
+        'Item': transaction['notes'],
+        'Vendor': counterparty['name'],
+        'Amount': "%.2f" % amount,
+        'Local': None,
+        'ID': transaction['id'],
+    }
+    log.info(values)
+
+    write_new_entry_to_spreadsheet(values)
+
+
 def newTransaction(transaction):
 
     if transaction['settled']:
@@ -130,12 +154,19 @@ def write_new_entry_to_spreadsheet(values):
 
 
 def lambda_handler(event, context):
+    log.info(event)
     transaction = event['data']
+
+    ## event type is always "transaction.created"
+    ## instead use the contents of transaction to identify transaction/transfer
 
     if transaction['merchant']:
         log.debug("Processing transaction")
-        log.info(transaction)
         newTransaction(transaction)
+
+    elif transaction['counterparty']:
+        log.debug("Processing transfer")
+        newTransfer(transaction)
 
     log.debug("Processing complete")
 
