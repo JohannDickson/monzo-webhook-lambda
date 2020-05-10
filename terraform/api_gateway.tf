@@ -19,6 +19,18 @@ resource "aws_api_gateway_method" "monzo" {
   authorization = "NONE"
 }
 
+resource "aws_api_gateway_method_response" "ok" {
+  rest_api_id = "${aws_api_gateway_rest_api.budget.id}"
+  resource_id = "${aws_api_gateway_resource.monzo.id}"
+  http_method = "${aws_api_gateway_method.monzo.http_method}"
+  status_code = "200"
+
+  response_models = {
+    "application/json" = "Empty"
+  }
+}
+
+
 resource "aws_api_gateway_integration" "monzo_lambda" {
   rest_api_id = "${aws_api_gateway_rest_api.budget.id}"
   resource_id = "${aws_api_gateway_method.monzo.resource_id}"
@@ -29,4 +41,15 @@ resource "aws_api_gateway_integration" "monzo_lambda" {
   type                    = "AWS"
   content_handling        = "CONVERT_TO_TEXT"
   passthrough_behavior    = "WHEN_NO_MATCH"
+}
+
+resource "aws_api_gateway_integration_response" "ok" {
+  rest_api_id = "${aws_api_gateway_rest_api.budget.id}"
+  resource_id = "${aws_api_gateway_resource.monzo.id}"
+  http_method = "${aws_api_gateway_method.monzo.http_method}"
+  status_code = "${aws_api_gateway_method_response.ok.status_code}"
+
+  response_templates = {
+    "application/json" = ""
+  }
 }
