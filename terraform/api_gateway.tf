@@ -6,6 +6,17 @@ resource "aws_api_gateway_rest_api" "budget" {
   }
 }
 
+resource "aws_api_gateway_deployment" "v1" {
+  depends_on = [aws_api_gateway_integration.monzo_lambda]
+
+  rest_api_id = "${aws_api_gateway_rest_api.budget.id}"
+}
+resource "aws_api_gateway_stage" "v1" {
+  stage_name    = "v1"
+  rest_api_id   = "${aws_api_gateway_rest_api.budget.id}"
+  deployment_id = "${aws_api_gateway_deployment.v1.id}"
+}
+
 resource "aws_api_gateway_resource" "monzo" {
   rest_api_id = "${aws_api_gateway_rest_api.budget.id}"
   parent_id   = "${aws_api_gateway_rest_api.budget.root_resource_id}"
