@@ -7,10 +7,10 @@ resource "aws_api_gateway_rest_api" "budget" {
 }
 
 resource "aws_api_gateway_deployment" "v1" {
-  depends_on = [aws_api_gateway_integration.monzo_lambda]
-
+  depends_on  = [aws_api_gateway_integration.monzo_lambda]
   rest_api_id = "${aws_api_gateway_rest_api.budget.id}"
 }
+
 resource "aws_api_gateway_stage" "v1" {
   stage_name    = "v1"
   rest_api_id   = "${aws_api_gateway_rest_api.budget.id}"
@@ -41,7 +41,6 @@ resource "aws_api_gateway_method_response" "ok" {
   }
 }
 
-
 resource "aws_api_gateway_integration" "monzo_lambda" {
   rest_api_id = "${aws_api_gateway_rest_api.budget.id}"
   resource_id = "${aws_api_gateway_method.monzo.resource_id}"
@@ -55,6 +54,7 @@ resource "aws_api_gateway_integration" "monzo_lambda" {
 }
 
 resource "aws_api_gateway_integration_response" "ok" {
+  depends_on  = [aws_api_gateway_integration.monzo_lambda]
   rest_api_id = "${aws_api_gateway_rest_api.budget.id}"
   resource_id = "${aws_api_gateway_resource.monzo.id}"
   http_method = "${aws_api_gateway_method.monzo.http_method}"
