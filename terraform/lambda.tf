@@ -21,10 +21,3 @@ resource "aws_lambda_function" "monzo-webhook" {
     }
   }
 }
-
-resource "aws_lambda_permission" "api_lambda" {
-  action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.monzo-webhook.function_name}"
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.budget.execution_arn}/*/${aws_api_gateway_method.monzo.http_method}${aws_api_gateway_resource.monzo.path}"
-}
