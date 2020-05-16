@@ -2,9 +2,9 @@ variable "lambda_package" {
   default = "../dist/monzo-webhook.zip"
 }
 
-resource "aws_lambda_function" "monzo-webhook" {
+resource "aws_lambda_function" "monzo_webhook" {
   function_name = "monzo-webhook"
-  role          = "${aws_iam_role.lambda_exec.arn}"
+  role          = "${aws_iam_role.monzo_lambda.arn}"
 
   filename         = "${var.lambda_package}"
   source_code_hash = "${filebase64sha256(var.lambda_package)}"

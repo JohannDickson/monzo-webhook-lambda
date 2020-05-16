@@ -1,5 +1,5 @@
-resource "aws_iam_role" "lambda_exec" {
-  name = "basicLambda"
+resource "aws_iam_role" "monzo_lambda" {
+  name = "monzo_lambda"
 
   assume_role_policy = <<EOF
 {
@@ -17,7 +17,7 @@ resource "aws_iam_role" "lambda_exec" {
 EOF
 }
 
-resource "aws_iam_role_policy_attachment" "test-attach" {
-  role       = "${aws_iam_role.lambda_exec.name}"
+resource "aws_iam_role_policy_attachment" "lambda_basic_exec" {
+  role       = "${aws_iam_role.monzo_lambda.name}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
