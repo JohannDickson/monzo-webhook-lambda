@@ -22,8 +22,10 @@ venv:
 	)
 
 clean_dist:
+	rm -f dist/${ZIP_FILE}
 	rm -fr dist/*.dist-info
 	rm -fr dist/*.egg-info
+	rm -fr dist/*virtualenv*
 	cd dist; \
 		rm -fr __pycache__; \
 		rm -fr easy_install.py; \
