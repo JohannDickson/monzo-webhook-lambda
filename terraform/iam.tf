@@ -18,6 +18,6 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_basic_exec" {
-  role       = "${aws_iam_role.monzo_lambda.name}"
+  role       = aws_iam_role.monzo_lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
