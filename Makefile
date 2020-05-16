@@ -22,6 +22,7 @@ venv:
 	)
 
 clean_dist:
+	rm -f dist/${ZIP_FILE}
 	rm -fr dist/*.dist-info
 	rm -fr dist/*.egg-info
 	rm -fr dist/*virtualenv*
