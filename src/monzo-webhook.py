@@ -111,7 +111,7 @@ def newTransaction(transaction):
         local_amount = "%.2f %s" % (
                 convert_amount(transaction['local_amount']), transaction['local_currency']
             )
-        log.debug("Local amount: ", local_amount)
+        log.debug("Local amount: %s", local_amount)
 
     ## Set category
     item = transaction['category']
